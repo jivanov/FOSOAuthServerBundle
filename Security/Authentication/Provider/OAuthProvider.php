@@ -59,12 +59,14 @@ class OAuthProvider implements AuthenticationProviderInterface
             $tokenString = $token->getToken();
 
             if ($accessToken = $this->serverService->verifyAccessToken($tokenString)) {
-                $roles = array();
                 $scope = $accessToken->getScope();
+                $user  = $accessToken->getData();
 
-                foreach ($token->getRoles() as $role) {
-                    $roles[] = $role->getRole();
+                if ($user) {
+                    $user = $this->userProvider->loadUserByUsername($username)
                 }
+
+                $roles = (null !== $user) ? $user->getRoles() : array();
 
                 if (!empty($scope)) {
                     foreach (explode(' ', $scope) as $role) {
@@ -76,8 +78,8 @@ class OAuthProvider implements AuthenticationProviderInterface
                 $token->setAuthenticated(true);
                 $token->setToken($tokenString);
 
-                if (null !== $data = $accessToken->getData()) {
-                    $token->setUser($data);
+                if (null !== $user) {
+                    $token->setUser($user);
                 }
 
                 return $token;
