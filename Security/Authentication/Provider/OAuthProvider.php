@@ -63,7 +63,7 @@ class OAuthProvider implements AuthenticationProviderInterface
                 $user  = $accessToken->getData();
 
                 if ($user) {
-                    $user = $this->userProvider->loadUserByUsername($username);
+                    $user = $this->userProvider->loadUserByUsername($user);
                 }
 
                 $roles = (null !== $user) ? $user->getRoles() : array();
